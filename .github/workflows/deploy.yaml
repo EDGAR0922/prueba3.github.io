@@ -1,0 +1,29 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar build
+        run: CI=false npm run build 
+
+      - name: Configurar identidad de Git
+        run: |
+          git config --global user.email "grupo90pr@gmail.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Desplegar usando gh-pages
+        run: npx gh-pages -d build --repo https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Franciscoleochambiv/app_gitflow.git -u "GitHub Actions <actions@github.com>"        
+        env:
+          CI: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
